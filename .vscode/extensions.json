@@ -1,0 +1,9 @@
+{
+	"recommendations": [
+		"karunamurti.tera",
+		"vadimcn.vscode-lldb",
+		"tamasfe.even-better-toml",
+		"matklad.rust-analyzer",
+		"editorconfig.editorconfig"
+	]
+}
