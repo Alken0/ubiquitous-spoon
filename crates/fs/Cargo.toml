@@ -1,0 +1,16 @@
+# a crate to help with the os file system
+
+[package]
+name = "fs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.6", features = ["fs", "io-util"] }
+mime_guess = "2.0"
+regex = "1.5"
+futures = "0.3"
+
+[dev-dependencies]
+testing = { path = "../testing" }
+tokio = { version = "*", features = ["macros", "rt"] }
