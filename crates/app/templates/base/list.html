@@ -1,0 +1,16 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<input autofocus class="form-control mb-4" type="text" placeholder="Search.."
+    onkeyup="filter_list(this, 'searchable-list');">
+
+{%block after_input%}{% endblock %}
+
+<ul class="list-group" id="searchable-list">
+    {% block items %}{% endblock %}
+</ul>
+{% endblock %}
+
+{% block javascript %}
+<script src="/static/custom/filter-list.js"></script>
+{% endblock %}

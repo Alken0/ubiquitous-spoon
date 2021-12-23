@@ -1,0 +1,12 @@
+{# audios: File[] #}
+
+{% extends "base/list.html" %}
+
+{% block items %}{% for audio in audios %}
+
+<li class="list-group-item">
+    <p>{{audio.name}}</p>
+    <a class="btn btn-primary" href="/audios/{{audio.id}}">Listen</a>
+</li>
+
+{% endfor %}{% endblock %}

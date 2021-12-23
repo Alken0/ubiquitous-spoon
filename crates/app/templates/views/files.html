@@ -1,0 +1,15 @@
+{# files: File[] #}
+
+{% extends "base/list.html" %}
+
+{% block after_input %}<small>Detected files: {{files.len()}}</small>{% endblock %}
+
+
+{% block items %}{% for file in files %}
+
+<li class="list-group-item">
+    <p> <b>{{file.name}}</b> <i><small>{{file.mime}}</small></i></p>
+    <small>{{file.path}}</small>
+</li>
+
+{% endfor %}{% endblock %}

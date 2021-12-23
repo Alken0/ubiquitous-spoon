@@ -1,0 +1,12 @@
+{# videos: File[] #}
+
+{% extends "base/list.html" %}
+
+{% block items %}{% for video in videos %}
+
+<li class="list-group-item">
+    <p>{{video.name}}</p>
+    <a class="btn btn-primary" href="/videos/{{video.id}}">Watch</a>
+</li>
+
+{% endfor %}{% endblock %}

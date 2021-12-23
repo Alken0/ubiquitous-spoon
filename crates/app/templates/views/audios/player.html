@@ -1,0 +1,11 @@
+{# video: File #}
+
+{% extends "base/base.html" %}
+
+{% block title %} {{audio.name}} {% endblock %}
+
+{% block content %}
+<audio class="container" width="50%" height="50%" controls>
+    <source src="/stream/{{audio.id}}" type="{{audio.mime}}">
+</audio>
+{% endblock %}
