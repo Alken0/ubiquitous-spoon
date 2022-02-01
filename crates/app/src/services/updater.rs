@@ -1,52 +1,57 @@
+use std::fmt::Display;
+
 use crate::repositories::{FileRepository, InsertFile};
 use futures::future::join_all;
-use tokio::task;
+use once_cell::sync::Lazy;
+use tokio::{sync::Mutex, task};
 
+static UPDATE_LOCK: Lazy<Mutex<u8>> = Lazy::new(|| Mutex::new(0));
+
+#[derive(Clone)]
 pub struct UpdateService {
-    repository: FileRepository,
-    to_check: Vec<fs::Directory>,
+    files: FileRepository,
 }
 
 impl UpdateService {
-    pub fn new(repository: FileRepository, to_check: &str) -> Self {
-        Self {
-            repository,
-            to_check: vec![fs::Directory::new(to_check.to_owned())],
-        }
+    pub fn new(files: FileRepository) -> Self {
+        Self { files }
     }
 
-    pub async fn clean_run(self) -> Result<(), String> {
-        self.clean().await?;
-        self.run().await;
-        Ok(())
-    }
-
-    async fn clean(&self) -> Result<(), String> {
-        for dir in &self.to_check {
-            self.repository.delete_by_path(&dir.path()).await?;
-        }
-        Ok(())
-    }
-
-    async fn run(mut self) {
+    pub async fn run(self, path: String) -> Result<(), String> {
+        let lock = UPDATE_LOCK.try_lock().map_err(|e| e.to_string())?;
         task::spawn(async move {
-            while !self.to_check.is_empty() {
-                let mut content = collect_content(&self.to_check).await;
-                self.to_check.append(&mut content.dirs);
-                let result = self
-                    .repository
-                    .insert_all(into_file_insert(content.files))
-                    .await;
+            let _keep_lock_in_scope = lock;
 
-                // TODO: better error handling for async-background tasks?
-                if result.is_err() {
-                    println!(
-                        "error has occured while inserting new files: {}",
-                        result.err().unwrap()
-                    )
-                }
-            }
+            let result = self.delete_old_entries(&path).await;
+            print_error(result, "error while deleting old files");
+
+            let result = self.find_and_insert_new_entries(path).await;
+            print_error(result, "error while inserting new files");
         });
+        Ok(())
+    }
+
+    async fn delete_old_entries(&self, path: &str) -> Result<(), String> {
+        self.files.delete_by_path(path).await?;
+        Ok(())
+    }
+
+    async fn find_and_insert_new_entries(self, path: String) -> Result<(), String> {
+        let mut to_check = vec![fs::Directory::new(path)];
+        while !to_check.is_empty() {
+            let content = collect_content(&to_check).await;
+            to_check = content.dirs;
+            self.files
+                .insert_all(into_file_insert(content.files))
+                .await?;
+        }
+        Ok(())
+    }
+}
+
+fn print_error<T>(result: Result<T, impl Display>, message: &str) {
+    if result.is_err() {
+        println!("{}: {}", message, result.err().unwrap());
     }
 }
 

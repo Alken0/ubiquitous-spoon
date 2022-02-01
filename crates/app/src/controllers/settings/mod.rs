@@ -1,5 +1,4 @@
-use self::updater::UpdateService;
-use crate::repositories::FileRepository;
+use crate::services::UpdateService;
 use askama::Template;
 use axum::{
     extract::Extension,
@@ -8,8 +7,6 @@ use axum::{
     routing::{get, post},
     Router,
 };
-
-mod updater;
 
 const UPDATE_PATH: &'static str = "./";
 const REFRESH_REDIRECT_PATH: &'static str = "/";
@@ -30,8 +27,8 @@ async fn settings() -> Result<Html<String>, String> {
     Ok(Html::from(template))
 }
 
-async fn refresh(Extension(files): Extension<FileRepository>) -> Result<Redirect, String> {
-    UpdateService::new(files, UPDATE_PATH).clean_run().await?;
+async fn refresh(Extension(updater): Extension<UpdateService>) -> Result<Redirect, String> {
+    updater.run(UPDATE_PATH.to_string()).await?;
     let redirect = Redirect::to(Uri::from_static(REFRESH_REDIRECT_PATH));
     return Ok(redirect);
 }
