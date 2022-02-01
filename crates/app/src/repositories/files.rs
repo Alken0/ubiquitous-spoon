@@ -5,11 +5,11 @@ use sea_orm::{
 };
 
 #[derive(Clone)]
-pub struct Files {
+pub struct FileRepository {
     db: DatabaseConnection,
 }
 
-impl Files {
+impl FileRepository {
     pub fn new(db: DatabaseConnection) -> Self {
         Self { db }
     }

@@ -1,4 +1,4 @@
-use crate::repositories::Files;
+use crate::repositories::FileRepository;
 use axum::{
     body::{Bytes, Full},
     extract::{Extension, Path},
@@ -17,7 +17,7 @@ pub fn setup() -> Router {
 }
 
 async fn stream(
-    Extension(files): Extension<Files>,
+    Extension(files): Extension<FileRepository>,
     Path(id): Path<u64>,
     headers: HeaderMap,
 ) -> Result<Chunk, String> {

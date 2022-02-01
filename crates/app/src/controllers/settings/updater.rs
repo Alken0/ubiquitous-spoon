@@ -1,14 +1,14 @@
-use crate::repositories::{Files, InsertFile};
+use crate::repositories::{FileRepository, InsertFile};
 use futures::future::join_all;
 use tokio::task;
 
 pub struct UpdateService {
-    repository: Files,
+    repository: FileRepository,
     to_check: Vec<fs::Directory>,
 }
 
 impl UpdateService {
-    pub fn new(repository: Files, to_check: &str) -> Self {
+    pub fn new(repository: FileRepository, to_check: &str) -> Self {
         Self {
             repository,
             to_check: vec![fs::Directory::new(to_check.to_owned())],
