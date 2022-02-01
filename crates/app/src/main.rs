@@ -10,9 +10,16 @@ async fn main() -> anyhow::Result<()> {
     let address = SocketAddr::from_str(ADDRESS)?;
     let app = app::app(DATABASE_URL).await?;
 
+    print_info();
+
     Server::bind(&address)
         .serve(app.into_make_service())
         .await?;
 
     Ok(())
+}
+
+fn print_info() {
+    println!("");
+    println!("Server: http://{}", ADDRESS);
 }
