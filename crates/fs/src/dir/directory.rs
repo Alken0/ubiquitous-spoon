@@ -1,5 +1,6 @@
-use super::entry::Entry;
 use crate::path::Path;
+use crate::Entry;
+use crate::File;
 use futures::future::join_all;
 use tokio::fs::read_dir;
 use tokio::io::Result;
@@ -35,5 +36,28 @@ impl Directory {
             .collect();
 
         return Ok(elements);
+    }
+
+    // returns all files in this directory and all sub/subsub/... directories
+    pub async fn files_recursively(&self) -> Vec<File> {
+        let mut files_to_output = Vec::new();
+        let mut dirs_to_check = vec![Directory::new(self.path.to_string())];
+
+        while !dirs_to_check.is_empty() {
+            let async_checks = dirs_to_check.iter().map(|e| e.elements());
+            let entries: Vec<Entry> = join_all(async_checks)
+                .await
+                .into_iter()
+                .filter_map(|e| e.ok())
+                .flatten()
+                .collect();
+
+            entries.into_iter().for_each(|f| match f {
+                Entry::File(f) => files_to_output.push(f),
+                Entry::Directory(d) => dirs_to_check.push(d),
+            });
+        }
+
+        return files_to_output;
     }
 }
