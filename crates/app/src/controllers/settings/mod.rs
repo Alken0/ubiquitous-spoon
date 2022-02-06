@@ -8,7 +8,7 @@ use axum::{
     Router,
 };
 
-const UPDATE_PATH: &'static str = "./";
+use super::UPDATE_PATH;
 const REFRESH_REDIRECT_PATH: &'static str = "/";
 
 pub fn setup() -> Router {

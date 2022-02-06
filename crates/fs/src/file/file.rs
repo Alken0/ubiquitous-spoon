@@ -64,6 +64,10 @@ impl File {
 
     /// guesses by evaluating the file extension
     pub fn mime(&self) -> Result<String> {
+        if self.path.ends_with(".m3u8") {
+            return Ok("application/x-mpegURL".to_string());
+        }
+
         let guess = mime_guess::from_path(&self.path).first();
         return match guess {
             Some(s) => Ok(s.to_string()),
@@ -130,6 +134,14 @@ mod test {
             assert!(File::new("/path/name.invalid".to_owned(), 0)
                 .mime()
                 .is_err());
+        }
+
+        #[tokio::test]
+        async fn m3u8() {
+            assert_eq!(
+                File::new("/path/name.m3u8".to_owned(), 0).mime().unwrap(),
+                String::from("application/x-mpegURL")
+            );
         }
     }
 

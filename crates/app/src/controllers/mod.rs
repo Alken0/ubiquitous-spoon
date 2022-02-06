@@ -14,6 +14,7 @@ mod settings;
 mod stream;
 mod videos;
 
+const UPDATE_PATH: &'static str = "./";
 const STATIC_FILE_DIR: &'static str = "./crates/app/static";
 
 pub fn setup(router: Router) -> Router {
@@ -28,6 +29,11 @@ pub fn setup(router: Router) -> Router {
         .nest("/files", files::setup())
         .nest("/stream", stream::setup())
         .nest("/settings", settings::setup())
+        .nest(
+            "/stream-video",
+            service::get(ServeDir::new(UPDATE_PATH))
+                .handle_error(|e| (StatusCode::NOT_FOUND, format!("{}", e))),
+        )
         .route("/", get(index))
 }
 
