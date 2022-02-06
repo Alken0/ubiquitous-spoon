@@ -7,6 +7,7 @@ use axum::{
     routing::get,
     Router,
 };
+use once_cell::sync::Lazy;
 use regex::Regex;
 use std::{cmp::max, convert::Infallible};
 
@@ -60,11 +61,11 @@ impl Range {
     }
 }
 
+static REGEX_NUMBERS: Lazy<Regex> = Lazy::new(|| Regex::new(r"[0-9]+").unwrap());
 impl From<&HeaderValue> for Range {
     fn from(value: &HeaderValue) -> Self {
         let value = value.to_str().unwrap_or_default();
-        let re = Regex::new(r"[0-9]+").unwrap();
-        let mut reversed_numbers: Vec<u64> = re
+        let mut reversed_numbers: Vec<u64> = REGEX_NUMBERS
             .find_iter(value)
             .map(|e| e.as_str())
             .map(|e| e.parse::<u64>().expect("invalid regex"))
@@ -95,8 +96,11 @@ impl Chunk {
             start: range.start(),
             end: range.end().unwrap_or(0),
             file_size: file.size(),
-            mime: file.mime().unwrap(),
-            content: file.chunk(&range.range()).await.unwrap(),
+            mime: file.mime().map_err(|e| e.to_string())?,
+            content: file
+                .chunk(&range.range())
+                .await
+                .map_err(|e| e.to_string())?,
         })
     }
 }
