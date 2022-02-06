@@ -6,6 +6,6 @@
 
 {% block content %}
 <audio class="container" width="50%" height="50%" controls>
-    <source src="/stream/{{audio.id}}" type="{{audio.mime}}">
+    <source src="/stream/{{audio.group_id}}/{{audio.group_member_name}}" type="{{audio.mime}}">
 </audio>
 {% endblock %}

@@ -17,6 +17,6 @@
 
 {% block content %}
     <video-js class="vjs-fluid vjs-default-skin vjs-big-play-centered vjs-theme-city" controls preload="auto" data-setup='{}'>
-        <source src="/stream-video/{{video.path}}" type="{{video.mime}}">
+        <source src="/stream/{{video.group_id}}/{{video.group_member_name}}" type="{{video.mime}}">
     </video-js>
 {% endblock %}

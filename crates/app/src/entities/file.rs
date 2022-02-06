@@ -11,6 +11,8 @@ pub struct Model {
     pub path: String,
     pub mime: String,
     pub size: i64,
+    pub group_id: String,
+    pub group_member_name: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter)]
@@ -40,6 +42,8 @@ pub struct File {
     pub path: String,
     pub mime: String,
     pub size: u64,
+    pub group_id: String,
+    pub group_member_name: String,
 }
 
 impl TryFrom<File> for Model {
@@ -58,6 +62,8 @@ impl TryFrom<File> for Model {
                 .size
                 .try_into()
                 .map_err(|_| "file.size should not be negative or too big".to_string())?,
+            group_id: value.group_id,
+            group_member_name: value.group_member_name,
         })
     }
 }
@@ -70,6 +76,8 @@ impl From<Model> for File {
             path: value.path,
             mime: value.mime,
             size: value.size.try_into().expect("should never be negative"),
+            group_id: value.group_id.try_into().expect("should never be negative"),
+            group_member_name: value.group_member_name,
         }
     }
 }

@@ -7,7 +7,7 @@ mod get {
     #[tokio::test]
     async fn status_code() {
         let app = init_app().await;
-        let response = get(app, "/stream/1234").await.unwrap();
+        let response = get(app, "/stream/1234/114").await.unwrap();
 
         assert_eq!(response.status(), StatusCode::OK);
     }

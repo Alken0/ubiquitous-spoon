@@ -29,11 +29,6 @@ pub fn setup(router: Router) -> Router {
         .nest("/files", files::setup())
         .nest("/stream", stream::setup())
         .nest("/settings", settings::setup())
-        .nest(
-            "/stream-video",
-            service::get(ServeDir::new(UPDATE_PATH))
-                .handle_error(|e| (StatusCode::NOT_FOUND, format!("{}", e))),
-        )
         .route("/", get(index))
 }
 

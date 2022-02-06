@@ -1,4 +1,8 @@
-use std::fmt::Display;
+use std::{
+    collections::hash_map::DefaultHasher,
+    fmt::Display,
+    hash::{Hash, Hasher},
+};
 
 use crate::repositories::{FileRepository, InsertFile};
 use futures::future::join_all;
@@ -72,13 +76,21 @@ impl TryInto<InsertFile> for fs::File {
     type Error = String;
 
     fn try_into(self) -> Result<InsertFile, Self::Error> {
-        Ok(InsertFile::new(
-            self.name(),
-            self.path(),
-            self.mime().map_err(|e| e.to_string())?,
-            self.size(),
-        )?)
+        Ok(InsertFile {
+            name: self.name(),
+            path: self.path(),
+            mime: self.mime().map_err(|e| e.to_string())?,
+            size: self.size(),
+            group_id: calc_group_id(&self.path_of_dir()),
+            group_member_name: self.name_with_extension(),
+        })
     }
+}
+
+fn calc_group_id(path: &str) -> String {
+    let mut hasher = DefaultHasher::new();
+    path.hash(&mut hasher);
+    format!("{}", hasher.finish())
 }
 
 async fn collect_content(elements: &[fs::Directory]) -> DirContent {

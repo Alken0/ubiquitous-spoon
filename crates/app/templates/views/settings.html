@@ -13,5 +13,22 @@
 <form action="/settings/shutdown" method="post" class="mb-2">
     <button class="btn btn-primary btn-block" type="submit">Shut Down</button>
 </form>
+<br>
+
+<div class="alert alert-danger" role="alert">
+    For Security Reasons: <br>
+    Please put one movie + related files in one folder and nothing else <br>
+    (It is possible to fetch other files in the folders as well!)
+</div>
+
+<div class="alert alert-secondary" role="alert">
+    The recommended format for your video-files is m3u8 (but browser support exists e.g. for mp4 as well). <br>
+    You might wanna use ffmpeg to convert the files yourself: <br>
+    <i> ffmpeg -i [input-file.mkv] -hls_list_size 0 [output].m3u8 </i>
+</div>
+
+
+  
 
 {% endblock %}
+
