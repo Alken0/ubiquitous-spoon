@@ -4,8 +4,19 @@
 
 {% block title %} {{video.name}} {% endblock %}
 
+{% block css %}
+    <link href="/static/videojs/video-js.min.css" rel="stylesheet"/>
+    <link href="/static/videojs/city.css" rel="stylesheet"/>
+    <link href="/static/videojs/custom.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block javascript %}
+    <script src="/static/videojs/video.min.js"></script>
+    <script>window.HELP_IMPROVE_VIDEOJS = false; //disable video-js google-analytic</script>
+{% endblock %}
+
 {% block content %}
-<video class="container" width="50%" height="50%" controls>
-    <source src="/stream/{{video.id}}" type="{{video.mime}}">
-</video>
+    <video-js class="vjs-fluid vjs-default-skin vjs-big-play-centered vjs-theme-city" controls preload="auto" data-setup='{}'>
+        <source src="/stream/{{video.id}}" type="{{video.mime}}">
+    </video-js>
 {% endblock %}
